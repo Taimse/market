@@ -1,0 +1,44 @@
+{% extends 'main/base.html' %}
+{% load basket_filters %}
+
+{%block main%}
+<div class='self_item_card'>
+    <div class="items_info self_info" >
+
+        <div class="item_img">
+            <img src="{{item.img.url}}">
+        </div>
+        <div>
+        <h3 class="items_title" >{{item.title}}</h3>
+        <div class="items_content" >{{item.content}}</div>
+            {% if item.pk not in bought_items%}
+            <form action="{%url 'add_item'%}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="id_tovara" value="{{ item.pk }}">
+                <input type="hidden" name="amount_of_items" value="1 ">
+                <div class="form-error">{{ form.title.errors }}</div>
+                <button type="submit" class="items_buy" >buy</button>
+            </form>
+            {%else%}
+            <div class="items_bought">
+                <form action="{% url 'update_amount' item.pk %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="id_tovara" value="{{ item.pk }}">
+                    <div class="form_update" >
+                        <div class="input-group">
+                            <button type="button" class="btn-minus">-</button>
+                            <input type="number" name="amount_of_items" value="{{ basket|get_item:item.pk }}">
+                            <button type="button" class="btn-plus">+</button>
+                        </div>
+                        <button type="submit" class="update_amount_button">Обновить количество</button>
+                    </div>
+
+                    <div class="form-error">{{ form.amount_of_items.errors }}</div>
+                </form>
+            </div>
+            {%endif%}
+        </div>
+    </div>
+
+</div>
+{%endblock%}

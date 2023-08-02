@@ -1,0 +1,98 @@
+{% load static %}
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{title}}</title>
+    <link rel="stylesheet" href="{% static 'main/css/style.css'%}">
+</head>
+<body>
+<div class="container">
+    <header class="header" >
+        <a href="{%url 'home'%}" >
+            <img class="logo" src="{% static 'main/images/logo.png'%}" alt="">
+
+        </a>
+<!--        <div class="header_search" >-->
+<!--            <img src="{% static 'main/images/search.png'%}" class="header_img">-->
+<!--            <input type="text" class="header_input">-->
+<!--        </div>-->
+        <div class="register_user" >
+            {% if request.user.is_authenticated %}
+            <div class="user" >{{user.username}}</div>
+                <a class="user" href="{%url 'logout'%}">Выйти</a>
+            {%else%}
+                <a href="{%url 'registration'%}" >
+                </a>
+            {%endif%}
+        </div>
+
+    </header>
+
+    <aside class="siterbar" >
+        {% block sitebar%}
+
+        {% endblock%}
+
+    </aside>
+    <main class="main">
+        {% block main %}
+            main
+        {% endblock main%}
+        {%block basket%}
+        {%endblock%}
+    </main>
+
+
+    {% block footer %}
+    <footer class="footer" >footer</footer>
+    {% endblock footer %}
+</div>
+<script>
+  // Находим все элементы кнопок и полей ввода по классу
+  const inputFields = document.querySelectorAll("input[name='amount_of_items']");
+  const btnMinuses = document.querySelectorAll(".btn-minus");
+  const btnPluses = document.querySelectorAll(".btn-plus");
+
+  // Добавьте обработчики нажатия на кнопки для каждой карточки
+  btnMinuses.forEach((btnMinus, index) => {
+    btnMinus.addEventListener("click", function () {
+      // Получаем текущее значение поля ввода
+      let currentValue = parseInt(inputFields[index].value);
+
+      // Уменьшаем значение на 1 (или на другое значение, если нужно уменьшать не на 1)
+      currentValue = Math.max(0, currentValue - 1);
+
+      // Обновляем значение поля ввода
+      inputFields[index].value = currentValue;
+    });
+  });
+
+  btnPluses.forEach((btnPlus, index) => {
+    btnPlus.addEventListener("click", function () {
+      // Получаем текущее значение поля ввода
+      let currentValue = parseInt(inputFields[index].value);
+
+      // Увеличиваем значение на 1 (или на другое значение, если нужно увеличивать не на 1)
+      currentValue += 1;
+
+      // Обновляем значение поля ввода
+      inputFields[index].value = currentValue;
+    });
+  });
+
+  // Добавляем обработчик ввода в поле ввода
+  inputFields.forEach((inputField) => {
+    inputField.addEventListener("input", function () {
+      // Получаем текущее значение поля ввода
+      let currentValue = parseInt(inputField.value);
+
+      // Проверяем, не опускается ли значение ниже 0
+      if (currentValue < 0 || isNaN(currentValue)) {
+        inputField.value = 0; // Если значение меньше 0 или не является числом, устанавливаем 0
+      }
+    });
+  });
+</script>
+</body>
+</html>

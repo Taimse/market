@@ -1,0 +1,81 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% load basket_filters %}
+
+{% block sitebar%}
+    {% if cat_selected == 0 %}
+    <li class="selected">Все категории</li>
+    {% else %}
+    <div class="cat"><a href="{% url 'home' %}">Все категории</a></div>
+    {% endif %}
+
+    {% for c in categories %}
+    {% if c.pk == cat_selected %}
+    <div class="selected">{{c.category}}</div>
+    {% else %}
+    <div class="cat"><a href="{{ c.get_absolute_url }}">{{c.category}}</a></div>
+    {% endif %}
+    {% endfor %}
+{% endblock%}
+{% block main %}
+{%block basket%}
+
+<div class="basket">
+    <a href="{%url 'basket'%}">
+    <div class="basket_items">
+        <img src="{% static 'main/images/basket.png'%}" alt="">
+        <div class="amount">
+            {{amount_of_items}}
+        </div>
+    </div>
+    </a>
+</div>
+{%endblock%}
+<div class="items">
+    {%for i in items%}
+    <a href="{{ i.get_absolute_url }}">
+    <div class='items_card'>
+        <div class="items_info" >
+
+            <div class="items_img">
+                <img src="{{i.img.url}}">
+            </div>
+            <h3 class="items_title" >{{i.title}}</h3>
+            <div class="items_content" >{{i.content|linebreaks|truncatewords:50}}</div>
+            {% if i.pk not in bought_items%}
+                <form action="{%url 'add_item'%}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="id_tovara" value="{{ i.pk }}">
+                    <input type="hidden" name="amount_of_items" value="1">
+                    <div class="form-error">{{ form.title.errors }}</div>
+                    <button type="submit" class="items_buy" >buy</button>
+                </form>
+            {%else%}
+                <div class="items_bought">
+
+                    <form action="{% url 'update_amount' i.pk %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="id_tovara" value="{{ i.pk }}">
+                        <div class="form_update" >
+                            <div class="input-group">
+                                <button type="button" class="btn-minus">-</button>
+                                <input type="number" name="amount_of_items" value="{{ basket|get_item:i.pk }}">
+                                <button type="button" class="btn-plus">+</button>
+                            </div>
+                            <button type="submit" class="update_amount_button">Обновить количество</button>
+                        </div>
+
+                        <div class="form-error">{{ form.amount_of_items.errors }}</div>
+                    </form>
+                </div>
+            {%endif%}
+        </div>
+
+    </div>
+    </a>
+    {%endfor%}
+</div>
+
+
+
+{% endblock main%}

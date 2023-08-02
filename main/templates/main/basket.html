@@ -1,0 +1,38 @@
+{% extends 'main/base.html' %}
+{% load basket_filters %}
+
+{% block main %}
+<div class="items">
+    {%for i in items%}
+    <div class='items_card'>
+            <div class="items_info" >
+                <div class="items_img">
+                    <img src="{{i.img.url}}">
+                </div>
+                <a href="{%url 'item' i.pk%}">
+                    <h3 class="items_title" >{{i.title}}</h3>
+                    <div class="items_content" >{{i.content|linebreaks|truncatewords:50}}</div>
+                    <div class="price" >{{ i.price }} Rubs</div>
+                </a>
+                <form action="{% url 'update_amount' i.pk %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="id_tovara" value="{{ i.pk }}">
+                    <div class="form_update" >
+                        <div class="input-group">
+                            <button type="button" class="btn-minus">-</button>
+                            <input type="number" name="amount_of_items" value="{{ basket|get_item:i.pk }}">
+                            <button type="button" class="btn-plus">+</button>
+                        </div>
+                        <button type="submit" class="update_amount_button">Обновить количество</button>
+                    </div>
+
+                    <div class="form-error">{{ form.amount_of_items.errors }}</div>
+                </form>
+            </div>
+
+    </div>
+    {%endfor%}
+</div>
+<div class="items_total_price">Итоговая цена: {{total_price}} Rubs</div>
+
+{% endblock main%}
